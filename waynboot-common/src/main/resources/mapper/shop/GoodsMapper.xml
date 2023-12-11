@@ -74,7 +74,7 @@
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{goods.endTime},'%Y-%m-%d')
             </if>
         </where>
-        order by create_time desc
+        order by create_time desc, id desc
     </select>
 
     <select id="selectGoodsListPageByl2CateId" resultMap="ShopGoodsResult">
@@ -158,7 +158,7 @@
             <if test="isHot == true">
                 and is_hot = #{isHot}
             </if>
-            order by create_time desc limit 10
+            order by create_time desc, id desc limit 10
         </where>
     </select>
 

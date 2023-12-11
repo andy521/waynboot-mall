@@ -25,25 +25,21 @@ public class QiniuConfig implements Serializable {
     /**
      * accessKey
      */
-    @NotBlank(message = "accessKey不能为空")
     private String accessKey;
 
     /**
      * Bucket 识别符
      */
-    @NotBlank(message = "Bucket不能为空")
     private String bucket;
 
     /**
      * 外链域名
      */
-    @NotBlank(message = "外链域名不能为空")
     private String host;
 
     /**
      * secretKey
      */
-    @NotBlank(message = "secretKey不能为空")
     private String secretKey;
 
     /**
@@ -61,5 +57,8 @@ public class QiniuConfig implements Serializable {
      */
     private Boolean enable;
 
-
+    /**
+     * 逻辑删除 0存在1删除
+     */
+    private Integer delFlag;
 }

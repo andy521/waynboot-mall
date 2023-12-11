@@ -2564,7 +2564,7 @@ CREATE TABLE `shop_goods_product`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 257 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 257 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品 SKU 表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of shop_goods_product
@@ -3576,16 +3576,17 @@ INSERT INTO `sys_user_role` VALUES (110, 3346);
 -- Table structure for tool_email_config
 -- ----------------------------
 DROP TABLE IF EXISTS `tool_email_config`;
-CREATE TABLE `tool_email_config`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `from_user` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收件人',
-  `host` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '邮件服务器SMTP地址',
-  `pass` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '密码',
-  `port` int NULL DEFAULT NULL COMMENT '端口',
-  `ssl_port` int NULL DEFAULT NULL COMMENT 'ssl端口',
-  `user` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '发件者用户名',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邮箱配置' ROW_FORMAT = Dynamic;
+CREATE TABLE `tool_email_config` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `from_user` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '收件人',
+    `host` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '邮件服务器SMTP地址',
+    `pass` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '密码',
+    `port` int DEFAULT NULL COMMENT '端口',
+    `ssl_port` int DEFAULT NULL COMMENT 'ssl端口',
+    `user` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '发件者用户名',
+    `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除 0存在 1删除',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='邮箱配置';
 
 -- ----------------------------
 -- Records of tool_email_config
@@ -3604,6 +3605,7 @@ CREATE TABLE `tool_qiniu_config`  (
   `type` tinyint NULL DEFAULT NULL COMMENT '空间类型 0 公开 1 私有',
   `region` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '存储区域',
   `enable` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
+  `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除 0存在 1删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '七牛云配置' ROW_FORMAT = Dynamic;
 

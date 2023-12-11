@@ -9,14 +9,14 @@ import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurat
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -40,18 +40,27 @@ public class CacheConfig implements CachingConfigurer {
 
     @Bean
     public LettuceClientConfigurationBuilderCustomizer lettuceCustomizer() {
+
         return builder -> {
             if (SystemUtils.IS_OS_LINUX) {
+                // create your socket options
+                SocketOptions socketOptions = SocketOptions.builder()
+                        .tcpUserTimeout(SocketOptions.TcpUserTimeoutOptions.builder()
+                                .enable(true)
+                                .tcpUserTimeout(Duration.ofSeconds(15))
+                                .build()
+                        )
+                        .keepAlive(SocketOptions.KeepAliveOptions.builder()
+                                .enable()
+                                .idle(Duration.ofSeconds(30))
+                                .interval(Duration.ofSeconds(10))
+                                .count(3)
+                                .build()
+                        ).build();
                 builder.clientOptions(ClientOptions.builder()
-                        .socketOptions(SocketOptions.builder()
-                                .keepAlive(SocketOptions.KeepAliveOptions.builder()
-                                        .enable(true)
-                                        .idle(Duration.ofMinutes(3))
-                                        .count(3)
-                                        .interval(Duration.ofSeconds(10))
-                                        .build())
-                                .build())
-                        .build());
+                        .socketOptions(socketOptions)
+                        .build())
+                ;
             }
         };
     }
@@ -66,30 +75,15 @@ public class CacheConfig implements CachingConfigurer {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(defaultCacheConfig())
-                .transactionAware()
-                .build();
+        return new MyRedisCacheManager(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory), defaultCacheConfig());
     }
 
     private RedisCacheConfiguration defaultCacheConfig() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                .prefixCacheNameWith(CacheConstants.CACHE_PREFIX)
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
                 .entryTtl(Duration.ofSeconds(600))
+                .computePrefixWith(cacheName -> CacheConstants.CACHE_PREFIX + cacheName)
                 .disableCachingNullValues();
     }
-
-    @Bean(name = "cacheKeyGenerator")
-    public KeyGenerator cacheKeyGenerator() {
-        return (target, method, params) -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append(target.getClass().getName());
-            sb.append(method.getName());
-            for (Object obj : params) {
-                sb.append(obj.toString());
-            }
-            return sb.toString();
-        };
-    }
-
 }

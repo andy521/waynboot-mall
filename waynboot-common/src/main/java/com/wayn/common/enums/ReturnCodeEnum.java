@@ -43,6 +43,8 @@ public enum ReturnCodeEnum {
     ORDER_USER_NOT_SAME_ERROR(5012, "订单用户和当前登陆用户不一致"),
     ORDER_ERROR_CART_EMPTY_ERROR(5013, "下单失败，当前购物车无数据"),
     ORDER_ERROR_ADDRESS_ERROR(50143, "下单失败，当前地址错误"),
+    ORDER_REFUND_ERROR(50144, "退款失败"),
+    ORDER_ERROR_STOCK_NOT_ENOUGH(50145, "%s,%s 库存不足，请重新选择商品"),
 
     // 用户错误
     USER_NOT_EXISTS_ERROR(5101, "用户不存在"),
@@ -53,6 +55,8 @@ public enum ReturnCodeEnum {
     USER_VERIFY_CODE_ERROR(5103, "验证码不正确"),
     USER_OLD_PASSWORD_ERROR(5104, "旧密码错误"),
     USER_NEW_OLD_PASSWORD_NOT_SAME_ERROR(5105, "新密码不能与旧密码相同"),
+    USER_CAPTCHA_CODE_ERROR(5106, "图形验证码不正确"),
+    USER_REGISTER_MOBILE_ERROR(5107, "注册手机号错误"),
 
     // 上传错误
     UPLOAD_ERROR(5201, "上传图片失败"),
